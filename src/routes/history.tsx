@@ -29,7 +29,6 @@ const trips: Trip[] = [
   { time: "16:55", perKm: 560, perHour: 4600, tone: "go", accepted: true },
 ];
 
-export default function HistoryPage() {}
 
 function History() {
   const accepted = trips.filter((t) => t.accepted);

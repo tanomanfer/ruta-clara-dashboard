@@ -9,8 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TripTabletRouteImport } from './routes/trip-tablet'
+import { Route as TripMobileRouteImport } from './routes/trip-mobile'
+import { Route as SetupRouteImport } from './routes/setup'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as EmptyRouteImport } from './routes/empty'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TripTabletRoute = TripTabletRouteImport.update({
+  id: '/trip-tablet',
+  path: '/trip-tablet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TripMobileRoute = TripMobileRouteImport.update({
+  id: '/trip-mobile',
+  path: '/trip-mobile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetupRoute = SetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmptyRoute = EmptyRouteImport.update({
+  id: '/empty',
+  path: '/empty',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +55,116 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/empty': typeof EmptyRoute
+  '/history': typeof HistoryRoute
+  '/home': typeof HomeRoute
+  '/setup': typeof SetupRoute
+  '/trip-mobile': typeof TripMobileRoute
+  '/trip-tablet': typeof TripTabletRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/empty': typeof EmptyRoute
+  '/history': typeof HistoryRoute
+  '/home': typeof HomeRoute
+  '/setup': typeof SetupRoute
+  '/trip-mobile': typeof TripMobileRoute
+  '/trip-tablet': typeof TripTabletRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/empty': typeof EmptyRoute
+  '/history': typeof HistoryRoute
+  '/home': typeof HomeRoute
+  '/setup': typeof SetupRoute
+  '/trip-mobile': typeof TripMobileRoute
+  '/trip-tablet': typeof TripTabletRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/empty'
+    | '/history'
+    | '/home'
+    | '/setup'
+    | '/trip-mobile'
+    | '/trip-tablet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/empty'
+    | '/history'
+    | '/home'
+    | '/setup'
+    | '/trip-mobile'
+    | '/trip-tablet'
+  id:
+    | '__root__'
+    | '/'
+    | '/empty'
+    | '/history'
+    | '/home'
+    | '/setup'
+    | '/trip-mobile'
+    | '/trip-tablet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmptyRoute: typeof EmptyRoute
+  HistoryRoute: typeof HistoryRoute
+  HomeRoute: typeof HomeRoute
+  SetupRoute: typeof SetupRoute
+  TripMobileRoute: typeof TripMobileRoute
+  TripTabletRoute: typeof TripTabletRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trip-tablet': {
+      id: '/trip-tablet'
+      path: '/trip-tablet'
+      fullPath: '/trip-tablet'
+      preLoaderRoute: typeof TripTabletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trip-mobile': {
+      id: '/trip-mobile'
+      path: '/trip-mobile'
+      fullPath: '/trip-mobile'
+      preLoaderRoute: typeof TripMobileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setup': {
+      id: '/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof SetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empty': {
+      id: '/empty'
+      path: '/empty'
+      fullPath: '/empty'
+      preLoaderRoute: typeof EmptyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +177,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmptyRoute: EmptyRoute,
+  HistoryRoute: HistoryRoute,
+  HomeRoute: HomeRoute,
+  SetupRoute: SetupRoute,
+  TripMobileRoute: TripMobileRoute,
+  TripTabletRoute: TripTabletRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
