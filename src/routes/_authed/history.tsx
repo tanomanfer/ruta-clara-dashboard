@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PrototypeNav } from "@/components/PrototypeNav";
 
-export const Route = createFileRoute("/history")({
+export const Route = createFileRoute("/_authed/history")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Historial" },

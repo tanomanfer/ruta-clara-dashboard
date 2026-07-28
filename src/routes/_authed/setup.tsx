@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { PrototypeNav } from "@/components/PrototypeNav";
 
-export const Route = createFileRoute("/setup")({
+export const Route = createFileRoute("/_authed/setup")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Tus objetivos" },

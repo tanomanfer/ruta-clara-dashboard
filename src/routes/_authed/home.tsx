@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PrototypeNav } from "@/components/PrototypeNav";
 
-export const Route = createFileRoute("/home")({
+export const Route = createFileRoute("/_authed/home")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Home" },

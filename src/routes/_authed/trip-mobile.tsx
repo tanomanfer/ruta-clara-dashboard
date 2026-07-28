@@ -9,7 +9,7 @@ const scenarios: Record<Tone, { label: string; value: string; unit: string; msg:
   stop: { label: "No conviene", value: "290", unit: "$/km", msg: "Muy por debajo" },
 };
 
-export const Route = createFileRoute("/trip-mobile")({
+export const Route = createFileRoute("/_authed/trip-mobile")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Vista celular" },

@@ -1,5 +1,6 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 
 const screens = [
   { to: "/", label: "Bienvenida" },
@@ -14,6 +15,8 @@ const screens = [
 export function PrototypeNav() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
@@ -34,6 +37,26 @@ export function PrototypeNav() {
               </Link>
             );
           })}
+          {isAuthenticated ? (
+            <button
+              onClick={async () => {
+                setOpen(false);
+                await signOut();
+                navigate({ to: "/" });
+              }}
+              className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-colors text-destructive hover:bg-surface-2"
+            >
+              Cerrar sesión
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              onClick={() => setOpen(false)}
+              className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-colors text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+            >
+              Iniciar sesión
+            </Link>
+          )}
         </div>
       )}
       <button

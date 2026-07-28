@@ -10,81 +10,107 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as EmptyRouteImport } from './routes/empty'
-import { Route as HistoryRouteImport } from './routes/history'
-import { Route as HomeRouteImport } from './routes/home'
-import { Route as SetupRouteImport } from './routes/setup'
-import { Route as TripMobileRouteImport } from './routes/trip-mobile'
-import { Route as TripTabletRouteImport } from './routes/trip-tablet'
+import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as AuthedEmptyRouteImport } from './routes/_authed/empty'
+import { Route as AuthedHistoryRouteImport } from './routes/_authed/history'
+import { Route as AuthedHomeRouteImport } from './routes/_authed/home'
+import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
+import { Route as AuthedTripMobileRouteImport } from './routes/_authed/trip-mobile'
+import { Route as AuthedTripTabletRouteImport } from './routes/_authed/trip-tablet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EmptyRoute = EmptyRouteImport.update({
+const AuthedRoute = AuthedRouteImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedEmptyRoute = AuthedEmptyRouteImport.update({
   id: '/empty',
   path: '/empty',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const HistoryRoute = HistoryRouteImport.update({
+const AuthedHistoryRoute = AuthedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const HomeRoute = HomeRouteImport.update({
+const AuthedHomeRoute = AuthedHomeRouteImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const SetupRoute = SetupRouteImport.update({
+const AuthedSetupRoute = AuthedSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const TripMobileRoute = TripMobileRouteImport.update({
+const AuthedTripMobileRoute = AuthedTripMobileRouteImport.update({
   id: '/trip-mobile',
   path: '/trip-mobile',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const TripTabletRoute = TripTabletRouteImport.update({
+const AuthedTripTabletRoute = AuthedTripTabletRouteImport.update({
   id: '/trip-tablet',
   path: '/trip-tablet',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/empty': typeof EmptyRoute
-  '/history': typeof HistoryRoute
-  '/home': typeof HomeRoute
-  '/setup': typeof SetupRoute
-  '/trip-mobile': typeof TripMobileRoute
-  '/trip-tablet': typeof TripTabletRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/empty': typeof AuthedEmptyRoute
+  '/history': typeof AuthedHistoryRoute
+  '/home': typeof AuthedHomeRoute
+  '/setup': typeof AuthedSetupRoute
+  '/trip-mobile': typeof AuthedTripMobileRoute
+  '/trip-tablet': typeof AuthedTripTabletRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/empty': typeof EmptyRoute
-  '/history': typeof HistoryRoute
-  '/home': typeof HomeRoute
-  '/setup': typeof SetupRoute
-  '/trip-mobile': typeof TripMobileRoute
-  '/trip-tablet': typeof TripTabletRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/empty': typeof AuthedEmptyRoute
+  '/history': typeof AuthedHistoryRoute
+  '/home': typeof AuthedHomeRoute
+  '/setup': typeof AuthedSetupRoute
+  '/trip-mobile': typeof AuthedTripMobileRoute
+  '/trip-tablet': typeof AuthedTripTabletRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/empty': typeof EmptyRoute
-  '/history': typeof HistoryRoute
-  '/home': typeof HomeRoute
-  '/setup': typeof SetupRoute
-  '/trip-mobile': typeof TripMobileRoute
-  '/trip-tablet': typeof TripTabletRoute
+  '/_authed': typeof AuthedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/_authed/empty': typeof AuthedEmptyRoute
+  '/_authed/history': typeof AuthedHistoryRoute
+  '/_authed/home': typeof AuthedHomeRoute
+  '/_authed/setup': typeof AuthedSetupRoute
+  '/_authed/trip-mobile': typeof AuthedTripMobileRoute
+  '/_authed/trip-tablet': typeof AuthedTripTabletRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/register'
     | '/empty'
     | '/history'
     | '/home'
@@ -94,6 +120,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
+    | '/register'
     | '/empty'
     | '/history'
     | '/home'
@@ -103,22 +131,22 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/empty'
-    | '/history'
-    | '/home'
-    | '/setup'
-    | '/trip-mobile'
-    | '/trip-tablet'
+    | '/_authed'
+    | '/login'
+    | '/register'
+    | '/_authed/empty'
+    | '/_authed/history'
+    | '/_authed/home'
+    | '/_authed/setup'
+    | '/_authed/trip-mobile'
+    | '/_authed/trip-tablet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  EmptyRoute: typeof EmptyRoute
-  HistoryRoute: typeof HistoryRoute
-  HomeRoute: typeof HomeRoute
-  SetupRoute: typeof SetupRoute
-  TripMobileRoute: typeof TripMobileRoute
-  TripTabletRoute: typeof TripTabletRoute
+  AuthedRoute: typeof AuthedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -130,59 +158,98 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/empty': {
-      id: '/empty'
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/empty': {
+      id: '/_authed/empty'
       path: '/empty'
       fullPath: '/empty'
-      preLoaderRoute: typeof EmptyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedEmptyRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    '/history': {
-      id: '/history'
+    '/_authed/history': {
+      id: '/_authed/history'
       path: '/history'
       fullPath: '/history'
-      preLoaderRoute: typeof HistoryRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedHistoryRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    '/home': {
-      id: '/home'
+    '/_authed/home': {
+      id: '/_authed/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedHomeRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    '/setup': {
-      id: '/setup'
+    '/_authed/setup': {
+      id: '/_authed/setup'
       path: '/setup'
       fullPath: '/setup'
-      preLoaderRoute: typeof SetupRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedSetupRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    '/trip-mobile': {
-      id: '/trip-mobile'
+    '/_authed/trip-mobile': {
+      id: '/_authed/trip-mobile'
       path: '/trip-mobile'
       fullPath: '/trip-mobile'
-      preLoaderRoute: typeof TripMobileRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedTripMobileRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    '/trip-tablet': {
-      id: '/trip-tablet'
+    '/_authed/trip-tablet': {
+      id: '/_authed/trip-tablet'
       path: '/trip-tablet'
       fullPath: '/trip-tablet'
-      preLoaderRoute: typeof TripTabletRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedTripTabletRouteImport
+      parentRoute: typeof AuthedRoute
     }
   }
 }
 
+interface AuthedRouteChildren {
+  AuthedEmptyRoute: typeof AuthedEmptyRoute
+  AuthedHistoryRoute: typeof AuthedHistoryRoute
+  AuthedHomeRoute: typeof AuthedHomeRoute
+  AuthedSetupRoute: typeof AuthedSetupRoute
+  AuthedTripMobileRoute: typeof AuthedTripMobileRoute
+  AuthedTripTabletRoute: typeof AuthedTripTabletRoute
+}
+
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedEmptyRoute: AuthedEmptyRoute,
+  AuthedHistoryRoute: AuthedHistoryRoute,
+  AuthedHomeRoute: AuthedHomeRoute,
+  AuthedSetupRoute: AuthedSetupRoute,
+  AuthedTripMobileRoute: AuthedTripMobileRoute,
+  AuthedTripTabletRoute: AuthedTripTabletRoute,
+}
+
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  EmptyRoute: EmptyRoute,
-  HistoryRoute: HistoryRoute,
-  HomeRoute: HomeRoute,
-  SetupRoute: SetupRoute,
-  TripMobileRoute: TripMobileRoute,
-  TripTabletRoute: TripTabletRoute,
+  AuthedRoute: AuthedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PrototypeNav } from "@/components/PrototypeNav";
 
-export const Route = createFileRoute("/trip-tablet")({
+export const Route = createFileRoute("/_authed/trip-tablet")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Vista tablet" },
