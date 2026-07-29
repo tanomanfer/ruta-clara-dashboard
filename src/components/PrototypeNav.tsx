@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 
 const screens = [
-  { to: "/", label: "Bienvenida" },
+  { to: "/", label: "Landing" },
   { to: "/setup", label: "Objetivos" },
   { to: "/home", label: "Home" },
   { to: "/trip-tablet", label: "Tablet" },

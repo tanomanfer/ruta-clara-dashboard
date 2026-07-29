@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_authed/trip-tablet")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Vista tablet" },
-      { name: "description", content: "Ventana flotante sobre Uber + Waze en tablet." },
+      { name: "description", content: "Ventana flotante sobre tus otras apps en la tablet." },
     ],
   }),
   component: TripTablet,
@@ -17,9 +17,9 @@ function TripTablet() {
       {/* Simulated tablet frame */}
       <div className="max-w-5xl mx-auto rounded-3xl border border-border bg-black overflow-hidden shadow-2xl">
         <div className="grid grid-cols-2 h-[560px] sm:h-[640px] relative">
-          {/* Fake Uber panel */}
+          {/* Panel genérico de una app de viajes, solo para dar contexto visual */}
           <div className="relative bg-[#0f0f10] p-6 opacity-40">
-            <div className="text-white/70 text-xs uppercase tracking-widest mb-4">Uber</div>
+            <div className="text-white/70 text-xs uppercase tracking-widest mb-4">Viajes</div>
             <div className="rounded-xl bg-white/5 h-24 mb-3" />
             <div className="rounded-xl bg-white/5 h-24 mb-3" />
             <div className="rounded-xl bg-white/5 h-24" />
@@ -27,10 +27,10 @@ function TripTablet() {
               Aceptar viaje
             </div>
           </div>
-          {/* Fake Waze panel */}
+          {/* Panel genérico de una app de mapa */}
           <div className="relative bg-[#1e3a5f] opacity-40">
             <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 20px)" }} />
-            <div className="p-6 text-white/70 text-xs uppercase tracking-widest">Waze</div>
+            <div className="p-6 text-white/70 text-xs uppercase tracking-widest">Mapa</div>
           </div>
 
           {/* Floating Ruta Clara window */}

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authed/trip-mobile")({
   head: () => ({
     meta: [
       { title: "Ruta Clara — Vista celular" },
-      { name: "description", content: "Franja superior que nunca tapa el botón de Uber." },
+      { name: "description", content: "Franja superior que nunca tapa lo que estás mirando." },
     ],
   }),
   component: TripMobile,
@@ -66,15 +66,15 @@ function TripMobile() {
             </div>
           </div>
 
-          {/* Fake Uber underneath */}
+          {/* Fondo genérico de otra app, solo para dar contexto visual */}
           <div className="pt-28 px-4 opacity-40">
-            <div className="text-white/70 text-xs uppercase tracking-widest mb-3">Uber · Viaje entrante</div>
+            <div className="text-white/70 text-xs uppercase tracking-widest mb-3">Viaje entrante</div>
             <div className="rounded-xl bg-white/5 h-28 mb-3" />
             <div className="rounded-xl bg-white/5 h-16 mb-3" />
             <div className="rounded-xl bg-white/5 h-16" />
           </div>
 
-          {/* Uber accept button — never covered */}
+          {/* Botón de aceptar del viaje — nunca queda tapado */}
           <div className="absolute bottom-6 left-4 right-4 rounded-xl bg-white text-black h-14 grid place-items-center font-semibold shadow-lg">
             Aceptar · 12s
           </div>
@@ -82,7 +82,7 @@ function TripMobile() {
       </div>
 
       <p className="mt-4 text-center text-xs text-muted-foreground max-w-xs mx-auto">
-        Franja angosta arriba. El botón "Aceptar" de Uber siempre queda visible abajo.
+        Franja angosta arriba. Tu decisión no queda tapada.
       </p>
 
       <PrototypeNav />
