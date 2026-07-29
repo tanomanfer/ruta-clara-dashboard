@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PrototypeNav } from "@/components/PrototypeNav";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authed/setup")({
   head: () => ({
@@ -13,9 +17,72 @@ export const Route = createFileRoute("/_authed/setup")({
 });
 
 function Setup() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
   const [perKm, setPerKm] = useState("450");
   const [perHour, setPerHour] = useState("3800");
   const [saved, setSaved] = useState(false);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["perfil", user?.id],
+    queryFn: async () => {
+      if (!user) throw new Error("No hay usuario autenticado");
+      const { data, error } = await supabase
+        .from("perfiles")
+        .select("objetivo_km, objetivo_hora")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (data) {
+      if (data.objetivo_km !== null && data.objetivo_km !== undefined) {
+        setPerKm(String(data.objetivo_km));
+      }
+      if (data.objetivo_hora !== null && data.objetivo_hora !== undefined) {
+        setPerHour(String(data.objetivo_hora));
+      }
+    }
+  }, [data]);
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("No hay usuario autenticado");
+      const { error } = await supabase
+        .from("perfiles")
+        .update({
+          objetivo_km: Number(perKm),
+          objetivo_hora: Number(perHour),
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["perfil", user?.id] });
+      toast.success("Tus objetivos quedaron guardados");
+      setSaved(true);
+    },
+    onError: () => {
+      toast.error("No pudimos guardar. Probá de nuevo.");
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+        <div className="max-w-md w-full">
+          <p className="text-muted-foreground animate-pulse">Cargando tus objetivos...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (saved) {
     return (
@@ -54,10 +121,11 @@ function Setup() {
         </div>
 
         <button
-          onClick={() => setSaved(true)}
-          className="mt-10 w-full rounded-xl bg-accent px-6 py-4 text-base font-semibold text-accent-foreground active:scale-[0.98] transition-transform"
+          onClick={() => mutation.mutate()}
+          disabled={mutation.isPending}
+          className="mt-10 w-full rounded-xl bg-accent px-6 py-4 text-base font-semibold text-accent-foreground active:scale-[0.98] transition-transform disabled:opacity-50 disabled:scale-100"
         >
-          Guardar y seguir
+          {mutation.isPending ? "Guardando..." : "Guardar y seguir"}
         </button>
         <p className="mt-4 text-center text-xs text-muted-foreground">Podés cambiarlos cuando quieras.</p>
       </div>
