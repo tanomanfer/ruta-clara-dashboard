@@ -22,6 +22,7 @@ function Setup() {
 
   const [perKm, setPerKm] = useState("450");
   const [perHour, setPerHour] = useState("3800");
+  const [criterio, setCriterio] = useState<"km" | "hora">("km");
   const [saved, setSaved] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -30,7 +31,7 @@ function Setup() {
       if (!user) throw new Error("No hay usuario autenticado");
       const { data, error } = await supabase
         .from("perfiles")
-        .select("objetivo_km, objetivo_hora")
+        .select("objetivo_km, objetivo_hora, criterio_evaluacion")
         .eq("id", user.id)
         .single();
 
@@ -48,6 +49,9 @@ function Setup() {
       if (data.objetivo_hora !== null && data.objetivo_hora !== undefined) {
         setPerHour(String(data.objetivo_hora));
       }
+      if (data.criterio_evaluacion) {
+        setCriterio(data.criterio_evaluacion as "km" | "hora");
+      }
     }
   }, [data]);
 
@@ -59,6 +63,7 @@ function Setup() {
         .update({
           objetivo_km: Number(perKm),
           objetivo_hora: Number(perHour),
+          criterio_evaluacion: criterio,
         })
         .eq("id", user.id);
 
@@ -89,17 +94,31 @@ function Setup() {
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <div className="max-w-md w-full">
           <div className="mx-auto mb-6 h-16 w-16 rounded-full grid place-items-center bg-go/15 border border-go/40">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="text-go">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              className="text-go"
+            >
               <path d="M5 12l5 5L20 7" />
             </svg>
           </div>
           <h1 className="text-3xl font-bold mb-3">Listo</h1>
           <p className="text-muted-foreground mb-2">Tus objetivos quedaron guardados.</p>
+          <p className="text-sm text-muted-foreground/80 mb-2">
+            Vamos a decidir por {criterio === "km" ? "$/km" : "$/hora"}
+          </p>
           <div className="my-8 grid grid-cols-2 gap-3">
             <Stat label="Mínimo $/km" value={perKm} />
             <Stat label="Mínimo $/hora" value={perHour} />
           </div>
-          <Link to="/home" className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-6 py-4 text-base font-semibold text-accent-foreground active:scale-[0.98] transition-transform">
+          <Link
+            to="/home"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-6 py-4 text-base font-semibold text-accent-foreground active:scale-[0.98] transition-transform"
+          >
             Empezar a trabajar
           </Link>
         </div>
@@ -111,13 +130,57 @@ function Setup() {
   return (
     <div className="min-h-screen px-6 py-10 pb-32">
       <div className="max-w-md mx-auto">
-        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-2">Paso 1 · Objetivos</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-2">
+          Paso 1 · Objetivos
+        </p>
         <h1 className="text-3xl font-bold mb-2">¿Cuánto necesitás ganar?</h1>
-        <p className="text-muted-foreground mb-8">Poné tus mínimos. Con eso decidimos si un viaje conviene o no.</p>
+        <p className="text-muted-foreground mb-8">
+          Poné tus mínimos. Con eso decidimos si un viaje conviene o no.
+        </p>
 
         <div className="space-y-5">
-          <Field label="Ganancia mínima por kilómetro" suffix="$/km" value={perKm} onChange={setPerKm} />
-          <Field label="Ganancia mínima por hora" suffix="$/hora" value={perHour} onChange={setPerHour} />
+          <Field
+            label="Ganancia mínima por kilómetro"
+            suffix="$/km"
+            value={perKm}
+            onChange={setPerKm}
+          />
+          <Field
+            label="Ganancia mínima por hora"
+            suffix="$/hora"
+            value={perHour}
+            onChange={setPerHour}
+          />
+
+          <div className="block">
+            <span className="block text-sm text-muted-foreground mb-2">
+              ¿Qué criterio decide el semáforo?
+            </span>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setCriterio("km")}
+                className={`rounded-xl border py-4 text-sm font-semibold text-center transition-colors bg-surface ${
+                  criterio === "km"
+                    ? "border-accent text-accent"
+                    : "border-border text-muted-foreground hover:bg-surface-2"
+                }`}
+              >
+                Por $/km
+              </button>
+              <button
+                type="button"
+                onClick={() => setCriterio("hora")}
+                className={`rounded-xl border py-4 text-sm font-semibold text-center transition-colors bg-surface ${
+                  criterio === "hora"
+                    ? "border-accent text-accent"
+                    : "border-border text-muted-foreground hover:bg-surface-2"
+                }`}
+              >
+                Por $/hora
+              </button>
+            </div>
+          </div>
         </div>
 
         <button
@@ -127,14 +190,26 @@ function Setup() {
         >
           {mutation.isPending ? "Guardando..." : "Guardar y seguir"}
         </button>
-        <p className="mt-4 text-center text-xs text-muted-foreground">Podés cambiarlos cuando quieras.</p>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Podés cambiarlos cuando quieras.
+        </p>
       </div>
       <PrototypeNav />
     </div>
   );
 }
 
-function Field({ label, suffix, value, onChange }: { label: string; suffix: string; value: string; onChange: (v: string) => void }) {
+function Field({
+  label,
+  suffix,
+  value,
+  onChange,
+}: {
+  label: string;
+  suffix: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <label className="block">
       <span className="block text-sm text-muted-foreground mb-2">{label}</span>
@@ -156,7 +231,9 @@ function Field({ label, suffix, value, onChange }: { label: string; suffix: stri
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-surface border border-border p-4">
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">{label}</div>
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+        {label}
+      </div>
       <div className="tabular text-2xl font-bold">${value}</div>
     </div>
   );
