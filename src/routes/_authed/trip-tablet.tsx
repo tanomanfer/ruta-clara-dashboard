@@ -1,5 +1,45 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { PrototypeNav } from "@/components/PrototypeNav";
+
+type Tone = "go" | "warn" | "stop";
+
+const scenarios: Record<
+  Tone,
+  {
+    label: string;
+    rentabilidadKm: string;
+    rentabilidadHora: string;
+    tarifa: string;
+    distancia: string;
+    tiempo: string;
+  }
+> = {
+  go: {
+    label: "Conviene",
+    rentabilidadKm: "720",
+    rentabilidadHora: "6.4k",
+    tarifa: "$5.900",
+    distancia: "8,2 km",
+    tiempo: "~14 min",
+  },
+  warn: {
+    label: "Dudoso",
+    rentabilidadKm: "480",
+    rentabilidadHora: "4.2k",
+    tarifa: "$4.100",
+    distancia: "8,5 km",
+    tiempo: "~20 min",
+  },
+  stop: {
+    label: "No conviene",
+    rentabilidadKm: "290",
+    rentabilidadHora: "2.5k",
+    tarifa: "$2.300",
+    distancia: "7,9 km",
+    tiempo: "~25 min",
+  },
+};
 
 export const Route = createFileRoute("/_authed/trip-tablet")({
   head: () => ({
@@ -12,8 +52,28 @@ export const Route = createFileRoute("/_authed/trip-tablet")({
 });
 
 function TripTablet() {
+  const [tone, setTone] = useState<Tone>("go");
+  const s = scenarios[tone];
+
+  const toneBgClass = tone === "go" ? "bg-go/15 border-go/30" : tone === "warn" ? "bg-warn/15 border-warn/30" : "bg-stop/15 border-stop/30";
+  const toneTextClass = tone === "go" ? "text-go" : tone === "warn" ? "text-warn" : "text-stop";
+  const toneDotClass = tone === "go" ? "bg-go" : tone === "warn" ? "bg-warn" : "bg-stop";
+
   return (
     <div className="min-h-screen p-4 sm:p-8 pb-32">
+      {/* Scenario switcher */}
+      <div className="max-w-xs mx-auto mb-6 grid grid-cols-3 gap-1 rounded-xl border border-border bg-surface p-1">
+        {(["go", "warn", "stop"] as Tone[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTone(t)}
+            className={`py-2 rounded-lg text-xs font-medium transition-colors ${tone === t ? "bg-surface-2 text-foreground" : "text-muted-foreground"}`}
+          >
+            {t === "go" ? "Verde" : t === "warn" ? "Ámbar" : "Rojo"}
+          </button>
+        ))}
+      </div>
+
       {/* Simulated tablet frame */}
       <div className="max-w-5xl mx-auto rounded-3xl border border-border bg-black overflow-hidden shadow-2xl">
         <div className="grid grid-cols-2 h-[560px] sm:h-[640px] relative">
@@ -36,9 +96,9 @@ function TripTablet() {
           {/* Floating Ruta Clara window */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] rounded-2xl bg-surface border border-border shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
             {/* Status bar */}
-            <div className="bg-go/15 border-b border-go/30 px-4 py-2 flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-go" />
-              <span className="text-go text-xs font-semibold uppercase tracking-widest">Conviene</span>
+            <div className={`${toneBgClass} border-b px-4 py-2 flex items-center gap-2`}>
+              <span className={`h-2.5 w-2.5 rounded-full ${toneDotClass}`} />
+              <span className={`${toneTextClass} text-xs font-semibold uppercase tracking-widest`}>{s.label}</span>
               <span className="ml-auto text-[10px] text-muted-foreground tabular">Cierra en 4s</span>
             </div>
 
@@ -47,27 +107,47 @@ function TripTablet() {
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Ganancia estimada</div>
                 <div className="flex items-baseline gap-3">
                   <div>
-                    <div className="tabular text-4xl font-extrabold text-go leading-none">$720</div>
+                    <div className={`tabular text-4xl font-extrabold ${toneTextClass} leading-none`}>${s.rentabilidadKm}</div>
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">por km</div>
                   </div>
                   <div className="h-10 w-px bg-border" />
                   <div>
-                    <div className="tabular text-4xl font-extrabold text-foreground leading-none">$6.4k</div>
+                    <div className="tabular text-4xl font-extrabold text-foreground leading-none">${s.rentabilidadHora}</div>
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">por hora</div>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3 pt-3 border-t border-border">
-                <MiniStat label="Distancia" value="8,2 km" />
-                <MiniStat label="Tarifa" value="$5.900" />
-                <MiniStat label="Tiempo" value="~14 min" />
+                <MiniStat label="Distancia" value={s.distancia} />
+                <MiniStat label="Tarifa" value={s.tarifa} />
+                <MiniStat label="Tiempo" value={s.tiempo} />
               </div>
 
-              <button className="mt-4 w-full rounded-lg border border-border bg-surface-2 py-2 text-xs text-muted-foreground flex items-center justify-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
-                Ver zona en el mapa
-              </button>
+              {(tone === "go" || tone === "warn") && (
+                <div className="mt-4 pt-3 border-t border-border">
+                  {/* NOTA TEMPORAL: Destino de ejemplo hardcodeado (Obelisco, Buenos Aires).
+                      En el futuro, esta información se leerá mediante OCR/Screen reading de las apps de Uber/DiDi. */}
+                  <div className="h-40 rounded-lg overflow-hidden border border-border">
+                    <iframe
+                      src="https://www.openstreetmap.org/export/embed.html?bbox=-58.3916,-34.6087,-58.3716,-34.5987&layer=mapnik&marker=-34.6037,-58.3816"
+                      className="w-full h-full border-0"
+                      loading="lazy"
+                      title="Zona de destino"
+                    />
+                  </div>
+                  <div className="mt-1.5 text-center">
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=-34.6037,-58.3816"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-muted-foreground hover:text-foreground underline"
+                    >
+                      Abrir en Google Maps
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
