@@ -151,10 +151,16 @@ function Home() {
         </div>
 
         {/* Quick actions */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <QuickLink to="/history" label="Ver historial" />
           <QuickLink to="/trip-mobile" label="Simular viaje" />
         </div>
+        <Link
+          to="/registrar-viaje"
+          className="flex w-full items-center justify-center rounded-xl bg-accent px-6 py-4 text-base font-semibold text-accent-foreground active:scale-[0.98] transition-transform"
+        >
+          Registrar viaje
+        </Link>
       </div>
       <PrototypeNav />
     </div>

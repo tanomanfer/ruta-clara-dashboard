@@ -17,6 +17,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthedEmptyRouteImport } from './routes/_authed/empty'
 import { Route as AuthedHistoryRouteImport } from './routes/_authed/history'
 import { Route as AuthedHomeRouteImport } from './routes/_authed/home'
+import { Route as AuthedRegistrarViajeRouteImport } from './routes/_authed/registrar-viaje'
 import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
 import { Route as AuthedTripMobileRouteImport } from './routes/_authed/trip-mobile'
 import { Route as AuthedTripTabletRouteImport } from './routes/_authed/trip-tablet'
@@ -60,6 +61,11 @@ const AuthedHomeRoute = AuthedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedRegistrarViajeRoute = AuthedRegistrarViajeRouteImport.update({
+  id: '/registrar-viaje',
+  path: '/registrar-viaje',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedSetupRoute = AuthedSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/empty': typeof AuthedEmptyRoute
   '/history': typeof AuthedHistoryRoute
   '/home': typeof AuthedHomeRoute
+  '/registrar-viaje': typeof AuthedRegistrarViajeRoute
   '/setup': typeof AuthedSetupRoute
   '/trip-mobile': typeof AuthedTripMobileRoute
   '/trip-tablet': typeof AuthedTripTabletRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/empty': typeof AuthedEmptyRoute
   '/history': typeof AuthedHistoryRoute
   '/home': typeof AuthedHomeRoute
+  '/registrar-viaje': typeof AuthedRegistrarViajeRoute
   '/setup': typeof AuthedSetupRoute
   '/trip-mobile': typeof AuthedTripMobileRoute
   '/trip-tablet': typeof AuthedTripTabletRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/_authed/empty': typeof AuthedEmptyRoute
   '/_authed/history': typeof AuthedHistoryRoute
   '/_authed/home': typeof AuthedHomeRoute
+  '/_authed/registrar-viaje': typeof AuthedRegistrarViajeRoute
   '/_authed/setup': typeof AuthedSetupRoute
   '/_authed/trip-mobile': typeof AuthedTripMobileRoute
   '/_authed/trip-tablet': typeof AuthedTripTabletRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/empty'
     | '/history'
     | '/home'
+    | '/registrar-viaje'
     | '/setup'
     | '/trip-mobile'
     | '/trip-tablet'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/empty'
     | '/history'
     | '/home'
+    | '/registrar-viaje'
     | '/setup'
     | '/trip-mobile'
     | '/trip-tablet'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/_authed/empty'
     | '/_authed/history'
     | '/_authed/home'
+    | '/_authed/registrar-viaje'
     | '/_authed/setup'
     | '/_authed/trip-mobile'
     | '/_authed/trip-tablet'
@@ -220,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedHomeRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/registrar-viaje': {
+      id: '/_authed/registrar-viaje'
+      path: '/registrar-viaje'
+      fullPath: '/registrar-viaje'
+      preLoaderRoute: typeof AuthedRegistrarViajeRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/setup': {
       id: '/_authed/setup'
       path: '/setup'
@@ -248,6 +267,7 @@ interface AuthedRouteChildren {
   AuthedEmptyRoute: typeof AuthedEmptyRoute
   AuthedHistoryRoute: typeof AuthedHistoryRoute
   AuthedHomeRoute: typeof AuthedHomeRoute
+  AuthedRegistrarViajeRoute: typeof AuthedRegistrarViajeRoute
   AuthedSetupRoute: typeof AuthedSetupRoute
   AuthedTripMobileRoute: typeof AuthedTripMobileRoute
   AuthedTripTabletRoute: typeof AuthedTripTabletRoute
@@ -257,6 +277,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedEmptyRoute: AuthedEmptyRoute,
   AuthedHistoryRoute: AuthedHistoryRoute,
   AuthedHomeRoute: AuthedHomeRoute,
+  AuthedRegistrarViajeRoute: AuthedRegistrarViajeRoute,
   AuthedSetupRoute: AuthedSetupRoute,
   AuthedTripMobileRoute: AuthedTripMobileRoute,
   AuthedTripTabletRoute: AuthedTripTabletRoute,
