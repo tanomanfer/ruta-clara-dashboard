@@ -161,6 +161,12 @@ function Home() {
         >
           Registrar viaje
         </Link>
+        <Link
+          to="/zonas"
+          className="mt-3 flex w-full items-center justify-center rounded-xl border border-border bg-surface px-6 py-4 text-base font-semibold text-foreground hover:bg-surface-2 active:scale-[0.98] transition-transform"
+        >
+          Ver mapa de zonas
+        </Link>
       </div>
       <PrototypeNav />
     </div>

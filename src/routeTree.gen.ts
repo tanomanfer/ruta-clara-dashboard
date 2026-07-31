@@ -21,6 +21,7 @@ import { Route as AuthedRegistrarViajeRouteImport } from './routes/_authed/regis
 import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
 import { Route as AuthedTripMobileRouteImport } from './routes/_authed/trip-mobile'
 import { Route as AuthedTripTabletRouteImport } from './routes/_authed/trip-tablet'
+import { Route as AuthedZonasRouteImport } from './routes/_authed/zonas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -81,6 +82,11 @@ const AuthedTripTabletRoute = AuthedTripTabletRouteImport.update({
   path: '/trip-tablet',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedZonasRoute = AuthedZonasRouteImport.update({
+  id: '/zonas',
+  path: '/zonas',
+  getParentRoute: () => AuthedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/setup': typeof AuthedSetupRoute
   '/trip-mobile': typeof AuthedTripMobileRoute
   '/trip-tablet': typeof AuthedTripTabletRoute
+  '/zonas': typeof AuthedZonasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/setup': typeof AuthedSetupRoute
   '/trip-mobile': typeof AuthedTripMobileRoute
   '/trip-tablet': typeof AuthedTripTabletRoute
+  '/zonas': typeof AuthedZonasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/_authed/setup': typeof AuthedSetupRoute
   '/_authed/trip-mobile': typeof AuthedTripMobileRoute
   '/_authed/trip-tablet': typeof AuthedTripTabletRoute
+  '/_authed/zonas': typeof AuthedZonasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/setup'
     | '/trip-mobile'
     | '/trip-tablet'
+    | '/zonas'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/setup'
     | '/trip-mobile'
     | '/trip-tablet'
+    | '/zonas'
   id:
     | '__root__'
     | '/'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/_authed/setup'
     | '/_authed/trip-mobile'
     | '/_authed/trip-tablet'
+    | '/_authed/zonas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -260,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedTripTabletRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/zonas': {
+      id: '/_authed/zonas'
+      path: '/zonas'
+      fullPath: '/zonas'
+      preLoaderRoute: typeof AuthedZonasRouteImport
+      parentRoute: typeof AuthedRoute
+    }
   }
 }
 
@@ -271,6 +290,7 @@ interface AuthedRouteChildren {
   AuthedSetupRoute: typeof AuthedSetupRoute
   AuthedTripMobileRoute: typeof AuthedTripMobileRoute
   AuthedTripTabletRoute: typeof AuthedTripTabletRoute
+  AuthedZonasRoute: typeof AuthedZonasRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
@@ -281,6 +301,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedSetupRoute: AuthedSetupRoute,
   AuthedTripMobileRoute: AuthedTripMobileRoute,
   AuthedTripTabletRoute: AuthedTripTabletRoute,
+  AuthedZonasRoute: AuthedZonasRoute,
 }
 
 const AuthedRouteWithChildren =
