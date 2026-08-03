@@ -172,7 +172,7 @@ function Zonas() {
   let mapContent = null;
 
   if (MapComponents && ClickHandler && MapRefresher) {
-    const { L, MapContainer, TileLayer, Marker, Popup } = MapComponents;
+    const { L, MapContainer, TileLayer, Marker, Popup, Circle } = MapComponents;
 
     const createMarkerIcon = (color: string, isSpecial = false) => {
       const size = isSpecial ? 24 : 20;
@@ -219,8 +219,14 @@ function Zonas() {
         {/* Existing Zones Markers */}
         {zonas.map((z: any) => {
           const color = MOTIVOS_COLORS[z.motivo] || "#9CA3AF";
-          return (
-            <Marker key={z.id} position={[z.lat, z.lng]} icon={createMarkerIcon(color)}>
+          return [
+            <Circle
+              key={`${z.id}-circle`}
+              center={[z.lat, z.lng]}
+              radius={500}
+              pathOptions={{ color: color, fillColor: color, fillOpacity: 0.15, weight: 1 }}
+            />,
+            <Marker key={`${z.id}-marker`} position={[z.lat, z.lng]} icon={createMarkerIcon(color)}>
               <Popup>
                 <div className="text-slate-900 min-w-[140px] text-xs">
                   <p className="font-bold text-sm text-slate-900 mb-1">{MOTIVOS_LABELS[z.motivo] || z.motivo}</p>
@@ -243,7 +249,7 @@ function Zonas() {
                 </div>
               </Popup>
             </Marker>
-          );
+          ];
         })}
 
         {/* Proposed New Zone Marker (Naranja de acento) */}

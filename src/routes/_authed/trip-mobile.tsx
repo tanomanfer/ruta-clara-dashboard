@@ -1,12 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PrototypeNav } from "@/components/PrototypeNav";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
+import "leaflet/dist/leaflet.css";
 
 type Tone = "go" | "warn" | "stop";
 const scenarios: Record<Tone, { label: string; value: string; unit: string; msg: string }> = {
   go: { label: "Conviene", value: "720", unit: "$/km", msg: "Buen viaje" },
   warn: { label: "Dudoso", value: "480", unit: "$/km", msg: "Justo en el límite" },
   stop: { label: "No conviene", value: "290", unit: "$/km", msg: "Muy por debajo" },
+};
+
+const MOTIVOS_LABELS: Record<string, string> = {
+  inseguridad: "Inseguridad",
+  calle_rota: "Calle en mal estado",
+  otro: "Otro",
+};
+
+const MOTIVOS_COLORS: Record<string, string> = {
+  inseguridad: "#E53935",
+  calle_rota: "#FFB300",
+  otro: "#9CA3AF",
 };
 
 export const Route = createFileRoute("/_authed/trip-mobile")({
@@ -22,6 +38,41 @@ export const Route = createFileRoute("/_authed/trip-mobile")({
 function TripMobile() {
   const [tone, setTone] = useState<Tone>("go");
   const s = scenarios[tone];
+
+  const { user } = useAuth();
+  const [MapComponents, setMapComponents] = useState<any>(null);
+
+  // Dynamic import of Leaflet and React-Leaflet to avoid window undefined errors in SSR
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      Promise.all([
+        import("leaflet"),
+        import("react-leaflet")
+      ]).then(([LModule, RLModule]) => {
+        setMapComponents({ L: LModule.default || LModule, ...RLModule });
+      }).catch((err) => {
+        console.error("Error loading Leaflet: ", err);
+      });
+    }
+  }, []);
+
+  // Query zones nearby (within ~3km or +-0.03 degrees around destination: lat -34.6037, lng -58.3816)
+  const { data: zonas = [] } = useQuery({
+    queryKey: ["zonas-cercanas", user?.id],
+    queryFn: async () => {
+      if (!user) throw new Error("No hay usuario autenticado");
+      const { data, error } = await supabase
+        .from("zonas")
+        .select("*")
+        .gte("lat", -34.6037 - 0.03)
+        .lte("lat", -34.6037 + 0.03)
+        .gte("lng", -58.3816 - 0.03)
+        .lte("lng", -58.3816 + 0.03);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && tone !== "stop",
+  });
 
   const toneBg = tone === "go" ? "bg-go" : tone === "warn" ? "bg-warn" : "bg-stop";
   const toneText = tone === "go" ? "text-go" : tone === "warn" ? "text-warn" : "text-stop";
@@ -68,12 +119,74 @@ function TripMobile() {
                 {/* NOTA TEMPORAL: Destino de ejemplo hardcodeado (Obelisco, Buenos Aires).
                     En el futuro, esta información se leerá mediante OCR/Screen reading de las apps de Uber/DiDi. */}
                 <div className="h-32 rounded-xl overflow-hidden border border-border">
-                  <iframe
-                    src="https://www.openstreetmap.org/export/embed.html?bbox=-58.3916,-34.6087,-58.3716,-34.5987&layer=mapnik&marker=-34.6037,-58.3816"
-                    className="w-full h-full border-0"
-                    loading="lazy"
-                    title="Zona de destino"
-                  />
+                  {MapComponents ? (() => {
+                    const { L, MapContainer, TileLayer, Marker, Popup, Circle } = MapComponents;
+
+                    const createMarkerIcon = (color: string, isSpecial = false) => {
+                      const size = isSpecial ? 24 : 20;
+                      const border = isSpecial ? "3px solid #FFFFFF" : "2px solid #FFFFFF";
+                      const markerHtml = isSpecial 
+                        ? `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: ${border}; box-shadow: 0 2px 6px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: white;">!</div>`
+                        : `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: ${border}; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`;
+
+                      return L.divIcon({
+                        className: "custom-leaflet-icon",
+                        html: markerHtml,
+                        iconSize: [size, size],
+                        iconAnchor: [size / 2, size / 2],
+                        popupAnchor: [0, -size / 2],
+                      });
+                    };
+
+                    return (
+                      <MapContainer
+                        center={[-34.6037, -58.3816]}
+                        zoom={15}
+                        className="w-full h-full border-0"
+                        scrollWheelZoom={false}
+                      >
+                        <TileLayer
+                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                        {/* Destino Marker */}
+                        <Marker position={[-34.6037, -58.3816]} icon={createMarkerIcon("#FF6B35", true)}>
+                          <Popup>
+                            <div className="text-slate-900 font-semibold text-xs text-center min-w-[60px]">
+                              Destino
+                            </div>
+                          </Popup>
+                        </Marker>
+
+                        {/* Zonas de riesgo cercanas */}
+                        {zonas.map((z: any) => {
+                          const color = MOTIVOS_COLORS[z.motivo] || "#9CA3AF";
+                          return [
+                            <Circle
+                              key={`${z.id}-circle`}
+                              center={[z.lat, z.lng]}
+                              radius={500}
+                              pathOptions={{ color: color, fillColor: color, fillOpacity: 0.15, weight: 1 }}
+                            />,
+                            <Marker key={`${z.id}-marker`} position={[z.lat, z.lng]} icon={createMarkerIcon(color)}>
+                              <Popup>
+                                <div className="text-slate-900 min-w-[120px] text-xs">
+                                  <p className="font-bold text-sm text-slate-900 mb-1">
+                                    {MOTIVOS_LABELS[z.motivo] || z.motivo}
+                                  </p>
+                                  {z.nota && <p className="text-slate-700 leading-snug">{z.nota}</p>}
+                                </div>
+                              </Popup>
+                            </Marker>
+                          ];
+                        })}
+                      </MapContainer>
+                    );
+                  })() : (
+                    <div className="w-full h-full bg-surface/50 flex items-center justify-center">
+                      <p className="text-muted-foreground text-xs animate-pulse">Cargando mapa...</p>
+                    </div>
+                  )}
                 </div>
                 <div className="mt-1.5 text-center">
                   <a
