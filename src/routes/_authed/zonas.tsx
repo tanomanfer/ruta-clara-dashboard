@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,6 +31,7 @@ const MOTIVOS_COLORS: Record<string, string> = {
 function Zonas() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const mapRef = useRef<any>(null);
 
   const [mapCenter, setMapCenter] = useState<[number, number]>([-34.6037, -58.3816]);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -192,6 +193,7 @@ function Zonas() {
 
     mapContent = (
       <MapContainer
+        ref={mapRef}
         center={mapCenter}
         zoom={14}
         className="h-[60vh] w-full rounded-xl overflow-hidden border border-border"
@@ -309,8 +311,36 @@ function Zonas() {
         </p>
 
         {/* Map */}
-        <div className="mb-4">
+        <div className="relative mb-4">
           {mapContent}
+          <button
+            type="button"
+            onClick={() => {
+              if (userLocation && mapRef.current) {
+                mapRef.current.setView(userLocation, 15);
+              } else if (!userLocation) {
+                toast.error("No pudimos obtener tu ubicación");
+              }
+            }}
+            disabled={!userLocation}
+            className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-surface border border-border shadow-lg z-[1000] flex items-center justify-center text-foreground hover:bg-surface-2 transition-colors active:scale-[0.98] ${
+              !userLocation ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            title="Recentrar en mi ubicación"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="shrink-0"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+            </svg>
+          </button>
         </div>
 
         {/* Ver Compartidas Toggle */}
