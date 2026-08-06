@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Gauge, SlidersHorizontal, History, MapPin, Check } from "lucide-react";
+import { Gauge, SlidersHorizontal, History, MapPin, Check, Gift } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -322,14 +322,14 @@ function Waitlist() {
 
   const form = useForm<LeadValues>({
     resolver: zodResolver(leadSchema),
-    defaultValues: { nombre: "", email: "", whatsapp: "" },
+    defaultValues: { nombre: "", email: "" },
   });
 
   const onSubmit = async (values: LeadValues) => {
     const { error } = await supabase.from("leads").insert({
       nombre: values.nombre,
       email: values.email,
-      whatsapp: values.whatsapp || null,
+      whatsapp: null,
     });
 
     if (error) {
@@ -346,9 +346,20 @@ function Waitlist() {
     <section className="px-5 py-16 md:py-20">
       <Reveal>
         <div className={NARROW}>
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-2">Sumate a la lista de espera</h2>
+          {/* Banda de promo — primeros 50 gratis */}
+          <div className="mb-8 flex items-center justify-center gap-2 rounded-full border border-go/40 bg-go/10 px-5 py-2.5 mx-auto w-fit">
+            <Gift className="h-4 w-4 text-go shrink-0" strokeWidth={2} />
+            <span className="text-xs md:text-sm font-semibold text-go text-center">
+              Los primeros 50 choferes: primer mes 100% gratis
+            </span>
+          </div>
+
+          <h2 className="text-2xl md:text-4xl font-bold text-center mb-2">
+            Asegurá tu mes gratis
+          </h2>
           <p className="text-sm text-muted-foreground/80 text-center mb-10 leading-relaxed">
-            Todavía en pruebas privadas. Dejanos tu contacto y te avisamos cuando esté lista para vos.
+            Lanzamos muy pronto. Dejá tu mail y sé de los primeros en probarla — el primer mes
+            corre por nuestra cuenta. Cupos limitados para los primeros que se registren.
           </p>
 
           <div className="rounded-3xl border border-accent/30 bg-surface glow-accent-ring p-6 md:p-10">
@@ -357,8 +368,10 @@ function Waitlist() {
                 <div className="mx-auto mb-5 h-16 w-16 rounded-full bg-go/15 border border-go/40 grid place-items-center shadow-[0_0_40px_-8px_var(--go)]">
                   <Check className="h-8 w-8 text-go" strokeWidth={3} />
                 </div>
-                <p className="text-lg font-semibold mb-1">Listo, te avisamos apenas esté lista</p>
-                <p className="text-sm text-muted-foreground/80">Gracias por sumarte a Ruta Clara.</p>
+                <p className="text-lg font-semibold mb-1">Listo, tu lugar quedó reservado</p>
+                <p className="text-sm text-muted-foreground/80">
+                  Te avisamos por mail apenas esté lista. Gracias por sumarte a Ruta Clara.
+                </p>
               </div>
             ) : (
               <Form {...form}>
@@ -389,26 +402,13 @@ function Waitlist() {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="whatsapp"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>WhatsApp (opcional)</FormLabel>
-                        <FormControl>
-                          <Input type="tel" autoComplete="tel" placeholder="11 2345 6789" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <Button
                     type="submit"
                     size="lg"
                     className="w-full h-12 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_-8px_var(--accent)]"
                     disabled={form.formState.isSubmitting}
                   >
-                    {form.formState.isSubmitting ? "Enviando..." : "Quiero que me avisen"}
+                    {form.formState.isSubmitting ? "Enviando..." : "Asegurar mi mes gratis"}
                   </Button>
                 </form>
               </Form>
