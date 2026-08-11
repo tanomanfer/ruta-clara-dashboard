@@ -1,0 +1,105 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-go: var(--go);
+  --color-warn: var(--warn);
+  --color-stop: var(--stop);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* Dashboard palette — dark is primary */
+  --background: oklch(0.20 0.005 240);       /* #1A1D1F asphalt */
+  --foreground: oklch(0.965 0.003 90);       /* #F2F2F0 off-white */
+  --surface: oklch(0.245 0.005 240);         /* #26292C card */
+  --surface-2: oklch(0.29 0.005 240);
+  --muted: oklch(0.29 0.005 240);
+  --muted-foreground: oklch(0.68 0.006 240); /* #9A9D9F */
+  --border: oklch(0.34 0.006 240);
+
+  --accent: oklch(0.72 0.19 45);             /* #FF6B35 warm orange */
+  --accent-foreground: oklch(0.15 0 0);
+
+  --go: oklch(0.72 0.20 145);                /* #00C853 green */
+  --warn: oklch(0.82 0.17 80);               /* #FFB300 amber */
+  --stop: oklch(0.63 0.22 27);               /* #E53935 red */
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .tabular {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .hero-gradient {
+    background:
+      radial-gradient(ellipse 90% 55% at 50% -5%, oklch(0.72 0.19 45 / 0.16), transparent 60%),
+      radial-gradient(ellipse 70% 45% at 85% 15%, oklch(0.72 0.2 145 / 0.10), transparent 65%),
+      var(--color-background);
+  }
+
+  .bg-dot-grid {
+    background-image: radial-gradient(currentColor 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--color-border);
+  }
+
+  .text-glow-accent {
+    text-shadow: 0 0 28px oklch(0.72 0.19 45 / 0.5), 0 0 56px oklch(0.72 0.19 45 / 0.22);
+  }
+
+  .text-glow-go {
+    text-shadow: 0 0 26px oklch(0.72 0.2 145 / 0.45), 0 0 52px oklch(0.72 0.2 145 / 0.2);
+  }
+
+  .glow-accent-ring {
+    box-shadow:
+      0 0 0 1px oklch(0.72 0.19 45 / 0.35),
+      0 0 48px -8px oklch(0.72 0.19 45 / 0.5);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
