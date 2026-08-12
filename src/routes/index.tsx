@@ -1,9 +1,8 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useState } from "react";
-import { Gauge, SlidersHorizontal, History, MapPin, Check, Gift } from "lucide-react";
+import { Gauge, SlidersHorizontal, History, MapPin, Gift } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -318,7 +317,7 @@ function About() {
 }
 
 function Waitlist() {
-  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   const form = useForm<LeadValues>({
     resolver: zodResolver(leadSchema),
@@ -329,7 +328,6 @@ function Waitlist() {
     const { error } = await supabase.from("leads").insert({
       nombre: values.nombre,
       email: values.email,
-      whatsapp: null,
     });
 
     if (error) {
@@ -337,16 +335,13 @@ function Waitlist() {
       return;
     }
 
-    toast.success("Listo, te avisamos apenas esté lista");
-    form.reset();
-    setSubmitted(true);
+    navigate({ to: "/bienvenida" });
   };
 
   return (
     <section className="px-5 py-16 md:py-20">
       <Reveal>
         <div className={NARROW}>
-          {/* Banda de promo — primeros 50 gratis */}
           <div className="mb-8 flex items-center justify-center gap-2 rounded-full border border-go/40 bg-go/10 px-5 py-2.5 mx-auto w-fit">
             <Gift className="h-4 w-4 text-go shrink-0" strokeWidth={2} />
             <span className="text-xs md:text-sm font-semibold text-go text-center">
@@ -363,56 +358,44 @@ function Waitlist() {
           </p>
 
           <div className="rounded-3xl border border-accent/30 bg-surface glow-accent-ring p-6 md:p-10">
-            {submitted ? (
-              <div className="text-center py-6">
-                <div className="mx-auto mb-5 h-16 w-16 rounded-full bg-go/15 border border-go/40 grid place-items-center shadow-[0_0_40px_-8px_var(--go)]">
-                  <Check className="h-8 w-8 text-go" strokeWidth={3} />
-                </div>
-                <p className="text-lg font-semibold mb-1">Listo, tu lugar quedó reservado</p>
-                <p className="text-sm text-muted-foreground/80">
-                  Te avisamos por mail apenas esté lista. Gracias por sumarte a Ruta Clara.
-                </p>
-              </div>
-            ) : (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="nombre"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nombre</FormLabel>
-                        <FormControl>
-                          <Input autoComplete="name" placeholder="Tu nombre" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input type="email" autoComplete="email" placeholder="vos@email.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full h-12 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_-8px_var(--accent)]"
-                    disabled={form.formState.isSubmitting}
-                  >
-                    {form.formState.isSubmitting ? "Enviando..." : "Asegurar mi mes gratis"}
-                  </Button>
-                </form>
-              </Form>
-            )}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="nombre"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nombre</FormLabel>
+                      <FormControl>
+                        <Input autoComplete="name" placeholder="Tu nombre" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" autoComplete="email" placeholder="vos@email.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full h-12 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_-8px_var(--accent)]"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? "Enviando..." : "Asegurar mi mes gratis"}
+                </Button>
+              </form>
+            </Form>
           </div>
         </div>
       </Reveal>
