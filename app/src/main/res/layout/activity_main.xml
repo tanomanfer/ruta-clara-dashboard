@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F1115"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ruta Clara"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configurá tu objetivo"
+            android:textColor="#9AA0A6"
+            android:textSize="15sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Criterio -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Cómo querés evaluar los viajes?"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <RadioGroup
+            android:id="@+id/grupoCriterio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="32dp">
+
+            <RadioButton
+                android:id="@+id/radioKm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Por kilómetro (\$/km)"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingVertical="8dp"
+                android:buttonTint="#00C853" />
+
+            <RadioButton
+                android:id="@+id/radioHora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Por hora (\$/hora)"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingVertical="8dp"
+                android:buttonTint="#00C853" />
+
+        </RadioGroup>
+
+        <!-- Objetivo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tu objetivo mínimo"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/labelObjetivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="En pesos"
+            android:textColor="#9AA0A6"
+            android:textSize="13sp"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/inputObjetivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ej: 18000"
+            android:textColorHint="#5F6368"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:inputType="number"
+            android:background="#1A1D1F"
+            android:padding="16dp" />
+
+        <!-- Botón guardar -->
+        <Button
+            android:id="@+id/btnGuardar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#6C5CE7"
+            android:layout_marginTop="32dp"
+            android:paddingVertical="14dp" />
+
+        <TextView
+            android:id="@+id/labelEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#00C853"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>

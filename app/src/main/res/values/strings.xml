@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RutaClara</string>
+    <string name="accessibility_service_description">Motor de rentabilidad de Ruta Clara</string>
+</resources>
