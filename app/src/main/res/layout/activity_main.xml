@@ -20,16 +20,101 @@
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
 
+        <!-- ============ CARTEL GRANDE DE ESTADO (lo primero que se ve) ============ -->
+        <!-- Muestra de un vistazo si la app está lista para trabajar o no.
+             El color de fondo y el texto cambian según el estado. -->
+        <LinearLayout
+            android:id="@+id/panelEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#3A1212"
+            android:padding="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvEstadoGrande"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔴 APAGADO"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/tvEstadoDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tocá el botón para empezar a trabajar"
+                android:textColor="#E0E0E0"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="6dp" />
+        </LinearLayout>
+
+        <!-- Botón grande principal: activar la lectura para arrancar el día -->
+        <Button
+            android:id="@+id/btnActivarCaptura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ACTIVAR PARA TRABAJAR"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:backgroundTint="#00C853"
+            android:paddingVertical="18dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/labelEstadoCaptura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#9AA0A6"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botón de diagnóstico, más discreto (para probar la lectura a mano) -->
+        <Button
+            android:id="@+id/btnProbarCaptura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Probar lectura ahora"
+            android:textColor="#B0B0B0"
+            android:textSize="14sp"
+            android:backgroundTint="#2A2D30"
+            android:paddingVertical="10dp"
+            android:enabled="false" />
+
+        <!-- ============ SEPARADOR ============ -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2A2D30"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ============ CONFIGURACIÓN (se toca una vez y listo) ============ -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Configurá tu objetivo"
-            android:textColor="#9AA0A6"
-            android:textSize="15sp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="32dp" />
+            android:text="Tu objetivo"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
 
-        <!-- Criterio -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configuralo una vez. La app usa esto para el semáforo."
+            android:textColor="#9AA0A6"
+            android:textSize="13sp"
+            android:layout_marginBottom="20dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +129,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="32dp">
+            android:layout_marginBottom="24dp">
 
             <RadioButton
                 android:id="@+id/radioKm"
@@ -68,7 +153,6 @@
 
         </RadioGroup>
 
-        <!-- Objetivo -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,7 +183,72 @@
             android:background="#1A1D1F"
             android:padding="16dp" />
 
-        <!-- Botón guardar -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Dónde querés ver el semáforo?"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Elegí el lugar que no te tape el botón de aceptar."
+            android:textColor="#9AA0A6"
+            android:textSize="13sp"
+            android:layout_marginBottom="12dp" />
+
+        <RadioGroup
+            android:id="@+id/grupoPosicion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/posArribaCentro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Arriba, al centro"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingVertical="8dp"
+                android:buttonTint="#00C853" />
+
+            <RadioButton
+                android:id="@+id/posArribaIzq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Arriba, a la izquierda"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingVertical="8dp"
+                android:buttonTint="#00C853" />
+
+            <RadioButton
+                android:id="@+id/posArribaDer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Arriba, a la derecha"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingVertical="8dp"
+                android:buttonTint="#00C853" />
+
+            <RadioButton
+                android:id="@+id/posAbajo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Abajo (útil en tablet)"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:paddingVertical="8dp"
+                android:buttonTint="#00C853" />
+
+        </RadioGroup>
+
         <Button
             android:id="@+id/btnGuardar"
             android:layout_width="match_parent"
@@ -109,7 +258,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:backgroundTint="#6C5CE7"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:paddingVertical="14dp" />
 
         <TextView
@@ -120,7 +269,19 @@
             android:textColor="#00C853"
             android:textSize="14sp"
             android:gravity="center"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnVerMapa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ver mapa (prueba)"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#FF6B35"
+            android:paddingVertical="14dp"
+            android:layout_marginBottom="24dp" />
 
     </LinearLayout>
 

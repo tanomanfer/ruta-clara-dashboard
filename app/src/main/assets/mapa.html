@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ruta Clara — Mapa de zonas</title>
+
+<!-- Leaflet (mapa gratis con OpenStreetMap). En el celu/WebView carga con internet. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#0B0E11; font-family: system-ui, -apple-system, Roboto, sans-serif; }
+  #mapa { position:absolute; inset:0; }
+  .leaflet-container { background:#232c36; }
+
+  /* Cartelito de estado arriba */
+  #estado {
+    position:absolute; top:10px; left:10px; right:10px; z-index:1000;
+    background:rgba(15,17,21,0.92); color:#fff; border-radius:12px;
+    padding:10px 14px; font-size:14px; box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    display:flex; align-items:center; gap:10px;
+  }
+  #estado .dot { width:14px; height:14px; border-radius:50%; background:#3B7BF6; flex:0 0 auto; }
+  #estado b { font-weight:700; }
+
+  /* Leyenda de zonas abajo */
+  #leyenda {
+    position:absolute; left:10px; bottom:14px; z-index:1000;
+    background:rgba(15,17,21,0.92); color:#E0E0E0; border-radius:12px;
+    padding:10px 14px; font-size:13px; display:flex; flex-direction:column; gap:6px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+  }
+  #leyenda .it { display:flex; align-items:center; gap:8px; }
+  #leyenda .c { width:14px; height:14px; border-radius:50%; flex:0 0 auto; }
+  .cv{ background:#00C853; } .ca{ background:#FFB300; } .cr{ background:#E53935; }
+
+  /* Marca / atribución obligatoria de OpenStreetMap (chica) */
+  .leaflet-control-attribution { font-size:10px !important; }
+
+  /* En el overlay chico dejamos solamente mapa + pin para verlo de un vistazo. */
+  @media (max-height: 300px) {
+    #estado, #leyenda, .leaflet-control-zoom, .leaflet-popup { display:none !important; }
+    .leaflet-control-attribution { font-size:6px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="estado"><span class="dot"></span><span id="estadoTxt">Buscando destino…</span></div>
+<div id="mapa"></div>
+<div id="leyenda">
+  <div class="it"><span class="c cv"></span> Zona tranquila</div>
+  <div class="it"><span class="c ca"></span> Calle rota / no me gusta</div>
+  <div class="it"><span class="c cr"></span> Peligroso</div>
+</div>
+
+<script>
+// ============================================================================
+// RUTA CLARA — MAPA DE ZONAS (versión web, base para el mini-mapa del semáforo)
+//
+// Qué hace:
+//  1. Toma el destino que se le pasa por la URL:  mapa.html?destino=<texto>
+//  2. Lo convierte en un punto del mapa (lat/lng) con Nominatim (gratis, OpenStreetMap).
+//     -> GUARDA EN CACHE cada dirección: si ya la buscó, no vuelve a consultar (rápido y gratis).
+//  3. Muestra el mapa (OpenStreetMap, gratis) centrado en el destino, con zoom.
+//  4. Dibuja las ZONAS de colores del chofer (por ahora de ejemplo; luego vendrán de Supabase).
+//
+// COSTO: $0. OpenStreetMap y Nominatim son gratis. El cache reduce las consultas al mínimo.
+// ============================================================================
+
+// --- Leer el destino de la URL ---
+function getParam(nombre) {
+  const p = new URLSearchParams(window.location.search);
+  return p.get(nombre);
+}
+// Destino de ejemplo si no viene ninguno (para probar en el navegador).
+const destino = getParam("destino") || "Echeverría, San Antonio de Padua, Merlo, Buenos Aires";
+
+// --- Crear el mapa (arranca en Buenos Aires hasta que ubica el destino) ---
+const mapa = L.map("mapa", { zoomControl: true, attributionControl: true })
+              .setView([-34.65, -58.62], 12);
+
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap'
+}).addTo(mapa);
+
+// --- ZONAS DEL CHOFER (ejemplo; luego vienen de la tabla `zonas` de Supabase) ---
+// color: "verde" (tranquila) | "amarillo" (calle rota) | "rojo" (peligroso)
+// Cada zona es un círculo de radio en metros.
+const zonasEjemplo = [
+  { lat:-34.664, lng:-58.627, radio:600, color:"verde",   nota:"Zona tranquila" },
+  { lat:-34.680, lng:-58.640, radio:450, color:"amarillo",nota:"Calle rota" },
+  { lat:-34.690, lng:-58.610, radio:400, color:"rojo",    nota:"Peligroso" }
+];
+const COLORES = { verde:"#00C853", amarillo:"#FFB300", rojo:"#E53935" };
+
+function dibujarZonas() {
+  zonasEjemplo.forEach(z => {
+    L.circle([z.lat, z.lng], {
+      radius: z.radio,
+      color: COLORES[z.color],
+      fillColor: COLORES[z.color],
+      fillOpacity: 0.28,
+      weight: 2
+    }).addTo(mapa).bindPopup(z.nota);
+  });
+}
+
+// --- GEOCODING con cache (texto del destino -> lat/lng) ---
+function claveCache(texto) { return "geo_" + texto.trim().toLowerCase(); }
+
+function leerCache(texto) {
+  try {
+    const v = localStorage.getItem(claveCache(texto));
+    return v ? JSON.parse(v) : null;
+  } catch (e) { return null; }
+}
+function guardarCache(texto, punto) {
+  try { localStorage.setItem(claveCache(texto), JSON.stringify(punto)); } catch (e) {}
+}
+
+async function geocodificar(texto) {
+  // 1) ¿Ya lo tenemos en cache? -> no consultamos nada.
+  const cacheado = leerCache(texto);
+  if (cacheado) return cacheado;
+
+  // 2) Consultar Nominatim (limitado a Argentina, 1 resultado).
+  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ar&q="
+              + encodeURIComponent(texto);
+  const resp = await fetch(url, { headers: { "Accept": "application/json" } });
+  const datos = await resp.json();
+  if (!datos || datos.length === 0) return null;
+  const punto = { lat: parseFloat(datos[0].lat), lng: parseFloat(datos[0].lon) };
+  guardarCache(texto, punto);   // guardamos para la próxima
+  return punto;
+}
+
+// --- Poner el pin del destino y centrar ---
+function mostrarDestino(punto, texto) {
+  const pin = L.marker([punto.lat, punto.lng]).addTo(mapa);
+  pin.bindPopup("<b>Destino</b><br>" + texto).openPopup();
+  mapa.setView([punto.lat, punto.lng], 15);
+}
+
+// --- Arranque ---
+(async function() {
+  dibujarZonas();
+  const estadoTxt = document.getElementById("estadoTxt");
+  try {
+    const punto = await geocodificar(destino);
+    if (punto) {
+      mostrarDestino(punto, destino);
+      estadoTxt.innerHTML = "Destino: <b>" + destino + "</b>";
+    } else {
+      estadoTxt.textContent = "No pude ubicar: " + destino;
+    }
+  } catch (e) {
+    estadoTxt.textContent = "Sin conexión para ubicar el destino.";
+  }
+})();
+</script>
+</body>
+</html>
